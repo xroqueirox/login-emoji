@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login com Emojis Interativos</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            font-family: Arial, sans-serif;
+            color: white;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            background-color: black;
+            padding: 20px;
+            border-radius: 10px;
+            position: absolute;
+            z-index: 5; /* Login acima dos emojis */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .login-container label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            text-align: left;
+            color: white;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid white;
+            background-color: black;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .login-container button {
+            width: 100px;
+            padding: 10px;
+            border: 1px solid white;
+            background-color: black;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease; /* Transição suave */
+        }
+
+        .login-container button:hover {
+            background-color: red; /* Muda para vermelho ao passar o mouse */
+            color: white;
+        }
+
+        .custom-message {
+            display: none;
+            margin-top: 10px;
+            background-color: rgba(255, 255, 255, 0.9); /* Fundo semi-transparente */
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            transition: opacity 0.5s ease, transform 0.3s ease; /* Transição suave */
+            opacity: 0;
+            transform: translateY(-10px); /* Começa ligeiramente acima */
+        }
+
+        .custom-message.visible {
+            display: block;
+            opacity: 1;
+            transform: translateY(0); /* Move para a posição final */
+        }
+
+        /* Botão de emojis */
+        .toggle-switch {
+            position: fixed;
+            top: 10px; /* Fixo no canto superior esquerdo */
+            left: 10px;
+            width: 60px;
+            height: 30px;
+            background-color: gray;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 5px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+            z-index: 10; /* Botão acima de tudo */
+        }
+
+        .toggle-switch.active {
+            background-color: red;
+        }
+
+        .toggle-circle {
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-circle {
+            transform: translateX(30px);
+        }
+
+        /* Emojis */
+        .emoji {
+            position: absolute;
+            font-size: 25px;
+            will-change: transform;
+            cursor: pointer;
+            z-index: 1; /* Emojis abaixo do login */
+            transition: transform 0.2s ease, opacity 0.3s ease;
+        }
+
+        .emoji.exploded {
+            transform: scale(2); /* Aumenta de tamanho */
+            opacity: 0; /* Desaparece */
+            transition: transform 0.3s ease, opacity 0.5s ease; /* Transição suave para explosão */
+        }
+
+        /* Texto "Ops!" */
+        .rickroll-text {
+            position: fixed;
+            bottom: 10px; /* Fixo no canto inferior direito */
+            right: 10px;
+            font-size: 14px;
+            color: white;
+            cursor: pointer;
+            text-decoration: underline;
+            opacity: 0.5; /* Invisível por padrão */
+            transition: opacity 0.3s ease;
+        }
+
+        .rickroll-text:hover {
+            opacity: 1; /* Visível ao passar o mouse */
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="loginContainer">
+        <label for="username">USERNAME</label>
+        <input type="text" id="username" placeholder="Enter username">
+
+        <label for="password">PASSWORD</label>
+        <input type="password" id="password" placeholder="Enter password">
+
+        <button onclick="handleLogin()">LOGIN</button>
+        <div id="customMessage" class="custom-message"></div>
+    </div>
+
+    <div class="toggle-switch" onclick="activateEmojis(this)">
+        <div class="toggle-circle"></div>
+    </div>
+
+    <div class="rickroll-text" onclick="redirectToSite()">Ops!</div>
+
+    <script>
+        const emojis = ["✨", "🌟", "💖", "🎉", "💫", "🌈", "🍩", "🍕", "🌼"];
+        const emojiElements = [];
+        const emojiCount = 15;
+        let emojisActivated = false;
+        const loginContainer = document.getElementById("loginContainer");
+
+        function handleLogin() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            // Login principal
+            if (username === "roqueiro?#00001??" && password === "the-past21093#$%^^") {
+                window.location.href = "https://xroqueirox.github.io/binary-eye";
+                return;
+            }
+
+            // Login alternativo
+            if (username === "funk-do-yudi" && password === "4002-8922") {
+                showMessage("Login bem-sucedido! Você ganhou um jogo na Microsoft Store: FCS5D08BDEA9C53A40");
+                return;
+            }
+
+            // Login inválido
+            alert("Usuário ou senha inválidos!");
+        }
+
+        function showMessage(message) {
+            const customMessage = document.getElementById("customMessage");
+            customMessage.innerText = message;
+            customMessage.classList.add("visible");
+
+            // Remover mensagem após 5 segundos
+            setTimeout(() => {
+                customMessage.classList.remove("visible");
+            }, 5000);
+        }
+
+        function activateEmojis(element) {
+            if (emojisActivated) return;
+
+            element.classList.add('active');
+            emojisActivated = true;
+
+            for (let i = 0; i < emojiCount; i++) {
+                createEmoji();
+            }
+
+            animateEmojis();
+        }
+
+        function createEmoji() {
+            const emoji = document.createElement('div');
+            emoji.classList.add('emoji');
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            document.body.appendChild(emoji);
+
+            // Centralizar os emojis na tela
+            emoji.style.left = `${Math.random() * window.innerWidth}px`;
+            emoji.style.top = `${Math.random() * window.innerHeight}px`;
+
+            emoji.addEventListener('click', () => explodeEmoji(emoji));
+
+            emojiElements.push({
+                element: emoji,
+                dx: randomVelocity(),
+                dy: randomVelocity(),
+            });
+        }
+
+        function explodeEmoji(emoji) {
+            emoji.classList.add("exploded");
+
+            // Remove o emoji após a explosão
+            setTimeout(() => {
+                emoji.remove();
+                createEmoji(); // Recria um novo emoji
+            }, 500);
+        }
+
+        function animateEmojis() {
+            emojiElements.forEach(data => {
+                const { element, dx, dy } = data;
+                const rect = element.getBoundingClientRect();
+                const loginRect = loginContainer.getBoundingClientRect();
+
+                let x = rect.left + dx;
+                let y = rect.top + dy;
+
+                // Colisão com as paredes
+                if (x <= 0 || x >= window.innerWidth - 25) data.dx *= -1;
+                if (y <= 0 || y >= window.innerHeight - 25) data.dy *= -1;
+
+                // Colisão com o login
+                if (
+                    x + 25 > loginRect.left &&
+                    x < loginRect.right &&
+                    y + 25 > loginRect.top &&
+                    y < loginRect.bottom
+                ) {
+                    data.dx *= -1;
+                    data.dy *= -1;
+                }
+
+                element.style.left = `${x}px`;
+                element.style.top = `${y}px`;
+            });
+
+            requestAnimationFrame(animateEmojis);
+        }
+
+        function randomVelocity() {
+            return (Math.random() - 0.5) * 2;
+        }
+
+        function redirectToSite() {
+            window.location.href = "https://youtu.be/dQw4w9WgXcQ?feature=shared";
+        }
+    </script>
+</body>
+</html>
